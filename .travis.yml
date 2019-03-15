@@ -1,0 +1,15 @@
+os: osx
+
+language: cpp
+compiler: gcc
+
+git:
+  submodules: false
+before_install:
+  - git submodule update --init --recursive
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
