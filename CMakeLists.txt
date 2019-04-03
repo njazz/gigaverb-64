@@ -29,10 +29,10 @@ include_directories(submodules/max-sdk/source/c74support/msp-includes)
 set (CMAKE_OSX_ARCHITECTURES "x86_64" "i386")
 
 if (WIN32)
-    target_link_libraries(py_shared "-FORCE:UNRESOLVED")
+    # target_link_libraries(py_shared "-FORCE:UNRESOLVED")
 endif()
 
-target_link_libraries(py_shared ${PYTHON_LIBRARIES})
+# target_link_libraries(py_shared ${PYTHON_LIBRARIES})
 
 macro(gigaverb_external name_ext_)
     set(name_ ${name_ext_})
