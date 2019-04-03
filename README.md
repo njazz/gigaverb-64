@@ -1,6 +1,7 @@
 # gigaverb~
 ---
 [![Build Status](https://travis-ci.org/njazz/gigaverb-64.svg?branch=master)](https://travis-ci.org/njazz/gigaverb-64)
+[![Build status](https://ci.appveyor.com/api/projects/status/ouns3n0a97l4b006?svg=true)](https://ci.appveyor.com/project/njazz/gigaverb-64)
 
 reverb external for Max/MSP  
 
