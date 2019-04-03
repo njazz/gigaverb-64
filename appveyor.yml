@@ -1,0 +1,62 @@
+version: '{build}'
+# branches:
+#   only:
+#   - master
+clone_folder: c:\projects\cmake-init
+image:
+# - Visual Studio 2013
+# - Visual Studio 2015
+- Visual Studio 2017
+
+# os: Visual Studio 2015
+#
+# environment:
+#   CTEST_OUTPUT_ON_FAILURE: 1
+#   matrix:
+#     - COMPILER: msys2
+#       PLATFORM: x64
+#       MSYS2_ARCH: i686
+#       MSYS2_DIR: msys64
+#       MSYSTEM: MINGW32
+#       BIT: 32
+#       BUILDTOOL: cmake
+
+configuration:
+- Release
+- Debug
+platform:
+# - x86
+- x64
+
+environment:
+  matrix:
+  - arch: Win64
+
+# skip unsupported combinations
+init:
+- set arch=
+- if "%arch%"=="Win64" ( set arch= Win64)
+- echo %arch%
+- echo %APPVEYOR_BUILD_WORKER_IMAGE%
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013%arch%" )
+- echo %generator%
+
+before_build:
+- cmd: |-
+    git submodule update --init --recursive
+    mkdir build
+    cd build
+    cmake --version
+    cmake ..  -G %generator%
+#    make
+
+# build_script:
+  # - set VERBOSE=1
+  # - '%APPVEYOR_BUILD_FOLDER%\scripts\appveyor-build.bat'
+
+build:
+  project: c:\projects\cmake-init\build\a_chaos_64.sln
+# verbosity: minimal
+  parallel: true

@@ -8,14 +8,19 @@ include_directories(./src/extra)
 
 if(APPLE)
 add_definitions(-DMAC_VERSION)
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -undefined dynamic_lookup")
 endif()
 
 if (WIN32)
+
 add_definitions(-DWIN_VERSION)
 add_definitions(-DNOMINMAX)
 add_definitions(-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=TRUE)
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 SET (LINK_FLAGS "${LINK_FLAGS} -shared --enable-auto-import")
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /EHsc")
+SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /FI${PROJECT_SOURCE_DIR}/src/extra/Types.h")
+
 endif()
 
 include_directories(submodules/max-sdk/source/c74support/max-includes)
@@ -35,11 +40,24 @@ macro(gigaverb_external name_ext_)
     add_library(${name_} MODULE src/gverb~.c src/gverbdsp.c)
     set_property(TARGET ${name_} PROPERTY CXX_STANDARD 11)
 
-    target_link_libraries(${name_} PRIVATE ${LIBS} "-undefined dynamic_lookup")
+    if (WIN32)
+        target_link_libraries(${name_} ${PROJECT_SOURCE_DIR}/submodules/max-sdk/source/c74support/max-includes/x64/MaxAPI.lib)
+	target_link_libraries(${name_} ${PROJECT_SOURCE_DIR}/submodules/max-sdk/source/c74support/msp-includes/x64/MaxAudio.lib)
+        # target_link_libraries(${name_} maxcrt.lib)
+        # target_link_libraries(${name_} maxcrt_p.lib)
+    endif()
+
     set_target_properties(${name_} PROPERTIES PREFIX "")
-    set_target_properties(${name_} PROPERTIES SUFFIX ".mxo")
     set_target_properties(${name_} PROPERTIES BUNDLE TRUE)
-    set_target_properties(${name_} PROPERTIES BUNDLE_EXTENSION "mxo")
+
+    if (WIN32)
+      set_target_properties(${name_} PROPERTIES BUNDLE_EXTENSION "mxe")
+      set_target_properties(${name_} PROPERTIES SUFFIX ".mxe")
+
+    else()
+      set_target_properties(${name_} PROPERTIES SUFFIX ".mxo")
+      set_target_properties(${name_} PROPERTIES BUNDLE_EXTENSION "mxo")
+    endif()
 
     install(TARGETS ${name_} DESTINATION ${PROJECT_SOURCE_DIR}/bin)
 
